@@ -13,3 +13,4 @@ export * from './LatencyRace';
 export * from './Walkthrough';
 export * from './Svg';
 export * from './Terminal';
+export * from './Zoom';

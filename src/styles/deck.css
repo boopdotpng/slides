@@ -48,6 +48,13 @@ th { color: var(--muted); font-weight: normal; }
 .fade.on { opacity: 1; }
 .caption { color: var(--muted); font-size: .75em; min-height: 1.5em; margin-top: .4em; }
 
+/* need more room? put class="fill" on the thing that needs it: the title moves to the
+   top, padding shrinks, and that element (and an island's root inside it) gets the rest */
+.slide:has(.fill) { justify-content: flex-start; padding: 2.5vh 3vw 2vh; }
+.slide:has(.fill) > :is(h1, h2) { font-size: 1.1em; margin-bottom: .3em; }
+.fill, .fill > astro-island, .fill > astro-island > * { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.mode-print .slide:has(.fill) { padding: 22px 48px 18px; }
+
 /* full-slide images: wrap in <div class="full"> */
 .full { position: absolute; inset: var(--inset-y) var(--inset-x); display: flex; align-items: center; justify-content: center; }
 .full img, .full svg { max-width: 100%; max-height: 100%; object-fit: contain; }

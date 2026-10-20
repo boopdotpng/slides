@@ -9,7 +9,11 @@ import type { ComponentChildren } from 'preact';
  *   <Timeline units={10} run={step} title={`${total} cycles`}
  *     rows={[{ label: 'ld t0, 0(a0)', note: 'slow', start: 0, end: 6 }, ...]} />
  */
-export type TimelineRow = { label: ComponentChildren; note?: ComponentChildren; start: number; end: number; color?: string };
+export type TimelineRow = {
+  label: ComponentChildren; note?: ComponentChildren; start: number; end: number; color?: string;
+  /** done at `end` but held until this unit (e.g. waiting to commit): a hatched bar after the solid one */
+  wait?: number;
+};
 
 export function Timeline({ rows, units, msPerUnit = 280, title, run = 0, after, afterTitle }: {
   rows: TimelineRow[];
@@ -37,6 +41,14 @@ export function Timeline({ rows, units, msPerUnit = 280, title, run = 0, after, 
               animationDelay: `${r.start * msPerUnit}ms`,
               animationDuration: `${(r.end - r.start) * msPerUnit}ms`,
             }} />
+            {r.wait != null && r.wait > r.end && (
+              <div key={`w${run}`} class="tl-wait" style={{
+                left: `${(r.end / units) * 100}%`,
+                width: `${((r.wait - r.end) / units) * 100}%`,
+                animationDelay: `${r.end * msPerUnit}ms`,
+                animationDuration: `${(r.wait - r.end) * msPerUnit}ms`,
+              }} />
+            )}
           </td>
           {after && <td class="tl-after">{after(r, i)}</td>}
         </tr>

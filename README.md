@@ -61,6 +61,7 @@ import MyThing from '../components/MyThing.tsx';
 <Code lang="c" code={src} hl={[2, 3]} />
 <div data-steps="4"><MyThing client:load /></div>   <!-- island gets 4 more steps -->
 <div class="full"><img src="/diagram.svg" alt="…"></div>  <!-- full-slide image from public/ -->
+<div data-steps="3" class="fill"><Big client:load /></div>  <!-- title to the top, this gets the rest -->
 <aside class="notes">only visible in the presenter window</aside>
 ```
 
@@ -102,6 +103,7 @@ Copy `src/components/TemplateIsland.tsx`. Hooks (`src/deck/hooks.ts`):
   - `LatencyRace`: log-scaled ping dots with honest counters
   - `Box`, `Arrow`, `Reveal`: SVG diagrams with self-drawing arrows
   - `Terminal`: types out new output
+  - `ZoomStage`, `ZoomView`, `nest`: a picture you zoom into, views nested in views (put it in a `.fill`)
   - `Strip`, `Heatmap`, `HeatCanvas`, `Bars`, `Shape`, `Tok`, `Crumbs`: data marks
   - `diverging`, `sequential`, `COLORS`, `useData('name')` (loads `public/data/name.json`), `tip`
 
