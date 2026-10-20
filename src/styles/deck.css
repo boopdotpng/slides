@@ -9,9 +9,10 @@
   --mono: 'Paper Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   /* slide padding; fixed px in print mode */
   --pad-y: 4vh; --pad-x: 4.5vw; --inset-y: 2vh; --inset-x: 2vw;
-  /* type scales with the screen: 37.8px at 1600×900 (print uses the same), capped by height for wide screens.
+  /* type scales with the screen: 37.8px at 1600×900 (print uses the same), capped by height for wide screens and by
+     width (2.36vw = the 16:9 value) for taller ones like 16:10, so a slide that fits at 16:9 fits everywhere.
      --scale is deck.config.ts's `scale` */
-  --base: calc(min(2.6vw, 4.2vh) * var(--scale, 1)); }
+  --base: calc(min(2.36vw, 4.2vh) * var(--scale, 1)); }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
   font: var(--base)/1.45 var(--sans); overflow: hidden; }

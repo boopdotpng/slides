@@ -203,8 +203,10 @@ export function initDeck() {
     open(`${location.pathname}?presenter${location.hash}`, 'deck-presenter', 'popup,width=1280,height=800');
   }
 
-  show(fromHash()[0]);
-  setStep(fromHash()[1]);
+  // read the hash once: show() rewrites it
+  const [n0, k0] = fromHash();
+  show(n0);
+  setStep(k0);
 
   if (mode === 'presenter') {
     initPresenter({

@@ -44,6 +44,9 @@ animations to finish plus `--hold` ms (default 1500). Options: `--out`, `--hold`
 JS-driven animations (`LatencyRace`, `auto` Walkthrough, `Terminal`) set their own `data-hold`; put `data-hold="5000"` on any
 element to make a slide linger. Needs Google Chrome and ffmpeg.
 
+`bun run shot 3.0 3.2 14-stack.1` screenshots slides at given steps from a running deck (default `--url http://localhost:4400/`)
+into `/tmp/shots/`, and prints any page errors. Options: `--url`, `--out`, `--wait`, `--width`, `--height`.
+
 `?print` shows every slide fully revealed, one per page: cmd+p → save as pdf (1600×900 pages, backgrounds on).
 
 ## writing slides
@@ -96,6 +99,7 @@ Copy `src/components/TemplateIsland.tsx`. Hooks (`src/deck/hooks.ts`):
 ## components
 
 - `Code`: tiny highlighter for `asm` (risc-v / x86 / arm names), `c`, `cpp`, `py`. `hl` highlights lines and dims the rest; `highlight(line, lang)` for inline.
+- `Math`: LaTeX via KaTeX at build time, `<Math tex="..." />` inline or `block`. static html, no client js.
 - `components/viz` (see the demo slides for each one in use):
   - `Walkthrough`: code + state table + caption, stepped or `auto`; `StateTable` on its own
   - `BitFields`, `Bytes`: binary words split into fields, memory as byte cells
@@ -117,7 +121,7 @@ src/
   deck/                 the engine: deck.ts (nav, steps, picker, modes), presenter.ts, hooks.ts
   pages/index.astro     loads every slide into one page
   slides/               your slides
-  components/           Code, TemplateIsland, viz/, demos/
+  components/           Code, Math, TemplateIsland, viz/, demos/
   styles/               deck.css (engine + theme), viz.css
 public/                 images, fonts (Paper Mono, OFL), data/
 ```

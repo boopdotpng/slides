@@ -2,7 +2,7 @@
  * Copy the template's own files into a deck made from it, so engine / viz kit
  * fixes land everywhere:
  *
- *   bun run sync ~/code/edu/risc-v-os/slides [more decks…]
+ *   bun run sync ~/code/edu/lec1/risc-v/slides [more decks…]
  *
  * Overwrites only the files listed in OWNED (the deck's slides, islands,
  * public/ assets and deck.config.ts are never touched). package.json is merged:
@@ -14,7 +14,7 @@ import { join, resolve } from 'node:path';
 
 const OWNED = [
   'src/deck', 'src/pages/index.astro', 'src/styles/deck.css', 'src/styles/viz.css',
-  'src/components/Code.tsx', 'src/components/TemplateIsland.tsx', 'src/components/viz',
+  'src/components/Code.tsx', 'src/components/Math.astro', 'src/components/TemplateIsland.tsx', 'src/components/viz',
   'public/fonts', 'scripts', 'astro.config.mjs', 'tsconfig.json', '.gitignore', 'README.md', 'AGENTS.md',
 ];
 
