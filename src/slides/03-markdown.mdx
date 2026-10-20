@@ -1,0 +1,12 @@
+import Code from '../components/Code.tsx';
+
+## slides can be markdown
+
+- `.mdx` files work like `.astro` ones: one file, one slide
+- components work too, like `<Code>`:
+
+<Code lang="py" code={`def attention(q, k, v):
+    w = (q @ k.T / k.shape[-1] ** .5).softmax(-1)   # (T, T)
+    return w @ v`} hl={[1]} />
+
+<p class="step muted">and so does <code>class="step"</code>, via plain html</p>

@@ -1,0 +1,38 @@
+---
+import '../styles/deck.css';
+import '../styles/viz.css';
+import { title } from '../deck.config';
+
+// every file in src/slides is one slide, ordered by filename (01-, 02-, ...)
+const modules = import.meta.glob<{ default: any }>('../slides/*.{astro,mdx}', { eager: true });
+const slides = Object.entries(modules)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([path, mod]) => ({ name: path.split('/').pop(), Slide: mod.default }));
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{title}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%2360a5fa'/></svg>">
+</head>
+<body>
+  {slides.map(({ name, Slide }) => (
+    <section class="slide" data-file={name}><Slide /></section>
+  ))}
+
+  <div id="nav">
+    <button id="prev" title="previous (←)">←</button>
+    <span id="counter" title="go to slide (g)"></span>
+    <button id="next" title="next (→)">→</button>
+    <button id="notes-btn" title="presenter view (p)">notes</button>
+    <button id="fs" title="fullscreen (f)">⛶</button>
+  </div>
+
+  <script>
+    import { initDeck } from '../deck/deck';
+    initDeck();
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+---
+import { Walkthrough } from '../components/viz';
+
+const src = `
+_start:
+    li   a0, 1
+    la   a1, msg
+    li   a2, 13
+    li   a7, 64
+    ecall`;
+---
+<h2>Walkthrough: code + state + caption</h2>
+<div data-steps="5">
+  <Walkthrough client:load lang="asm" code={src}
+    vars={[{ name: 'pc' }, { name: 'a0', note: 'fd', reg: true }, { name: 'a1', note: 'buf', reg: true },
+           { name: 'a2', note: 'len', reg: true }, { name: 'a7', note: 'syscall #', reg: true }]}
+    steps={[
+      { hl: [0], text: 'the kernel starts the pc at _start' },
+      { hl: [1], set: { pc: '0x11130', a0: 1 }, text: 'fd 1 is stdout' },
+      { hl: [2], set: { pc: '0x11134', a1: '0x10120' }, text: 'a1 = address of the bytes' },
+      { hl: [3], set: { pc: '0x1113c', a2: 13 }, text: '13 bytes to write' },
+      { hl: [4], set: { pc: '0x11140', a7: 64 }, text: 'a7 picks the syscall: 64 = write' },
+      { hl: [5], set: { pc: '0x11144' }, text: 'ecall → write(1, msg, 13)' },
+    ]} />
+</div>

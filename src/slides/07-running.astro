@@ -1,0 +1,35 @@
+---
+import { LatencyRace, Walkthrough } from '../components/viz';
+
+const loop = `
+addi t0, x0, 3
+addi t0, t0, -1
+bne  t0, x0, -4
+ecall`;
+---
+<h2>animations that run by themselves</h2>
+<div class="cols" style="font-size: .8em">
+  <div>
+    <h3>Walkthrough with <code>auto</code></h3>
+    <Walkthrough client:load lang="asm" code={loop} auto={900}
+      vars={[{ name: 'pc' }, { name: 't0', reg: true }]}
+      steps={[
+        { hl: [0], set: { pc: '0x00', t0: 3 } },
+        { hl: [1], set: { pc: '0x04', t0: 2 } },
+        { hl: [2], set: { pc: '0x08' } },
+        { hl: [1], set: { pc: '0x04', t0: 1 } },
+        { hl: [2], set: { pc: '0x08' } },
+        { hl: [1], set: { pc: '0x04', t0: 0 } },
+        { hl: [2], set: { pc: '0x08' } },
+        { hl: [3], set: { pc: '0x0c' } },
+      ]} />
+  </div>
+  <div>
+    <h3>LatencyRace</h3>
+    <LatencyRace client:load rows={[
+      { name: 'ssd', ns: 75_000 }, { name: 'ram', ns: 90 }, { name: 'l3', ns: 12 },
+      { name: 'l2', ns: 3.5 }, { name: 'l1', ns: 1 },
+    ]} />
+  </div>
+</div>
+<aside class="notes">Both pause when the slide is off screen and restart when you come back (useTicker / useFrame).</aside>

@@ -1,0 +1,21 @@
+{
+  "name": "slides",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^8.0.1",
+    "@astrojs/preact": "^6.0.5",
+    "astro": "^7.3.2",
+    "preact": "^10.29.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.11",
+    "typescript": "^6"
+  }
+}

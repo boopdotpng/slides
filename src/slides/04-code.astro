@@ -1,0 +1,33 @@
+---
+import Code from '../components/Code.tsx';
+
+const c = `
+#include <stdint.h>
+
+// sum an array
+int64_t sum(const int64_t *xs, size_t n) {
+    int64_t s = 0;
+    for (size_t i = 0; i < n; i++)
+        s += xs[i];
+    return s;
+}`;
+const asm = `
+sum:                    # a0 = xs, a1 = n
+    li   t0, 0
+loop:
+    beqz a1, done
+    ld   t1, 0(a0)
+    add  t0, t0, t1
+    addi a0, a0, 8
+    addi a1, a1, -1
+    j    loop
+done:
+    mv   a0, t0
+    ret`;
+---
+<h2>code: c / c++, asm, python</h2>
+<div class="cols small">
+  <Code lang="c" code={c} />
+  <Code lang="asm" code={asm} hl={[3, 4, 5, 6, 7, 8]} />
+</div>
+<p class="muted small"><code>hl</code> highlights lines and dims the rest. inline: <code>highlight(line, 'asm')</code></p>
