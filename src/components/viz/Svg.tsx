@@ -31,23 +31,41 @@ export function Box({ x, y, w, h, title, sub, tag, fill = '#141414', stroke = '#
   );
 }
 
-/** Straight arrow that draws itself from `from` to `to`; the label sits beside its middle. */
-export function Arrow({ from: [x1, y1], to: [x2, y2], on = true, color = 'var(--accent)', label, width = 4, labelOffset = [16, 8] }: {
+/**
+ * Arrow that draws itself from `from` to `to`, optionally bending through `via` points
+ * (corners rounded by `r`); the label sits beside the middle of the first segment.
+ * The head scales with `width`. `dashed` arrows fade in instead of drawing.
+ */
+export function Arrow({ from, to, via = [], r = 8, on = true, color = 'var(--accent)', label, width = 4, dashed = false, labelOffset = [16, 8] }: {
   from: [number, number]; to: [number, number];
-  on?: boolean; color?: string; label?: string; width?: number;
+  via?: [number, number][]; r?: number;
+  on?: boolean; color?: string; label?: string; width?: number; dashed?: boolean;
   labelOffset?: [number, number];
 }) {
-  const len = Math.hypot(x2 - x1, y2 - y1) || 1;
-  const [ux, uy] = [(x2 - x1) / len, (y2 - y1) / len]; // unit direction
+  const pts = [from, ...via, to];
+  const unit = ([ax, ay]: [number, number], [bx, by]: [number, number]) => {
+    const l = Math.hypot(bx - ax, by - ay) || 1;
+    return [(bx - ax) / l, (by - ay) / l];
+  };
+  const head = width * 3.5, half = width * 2.25;
+  let d = `M ${from[0]} ${from[1]}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [p, [ix, iy], [ox, oy]] = [pts[i], unit(pts[i - 1], pts[i]), unit(pts[i], pts[i + 1])];
+    d += ` L ${p[0] - ix * r} ${p[1] - iy * r} Q ${p[0]} ${p[1]} ${p[0] + ox * r} ${p[1] + oy * r}`;
+  }
+  const [x2, y2] = to;
+  const [ux, uy] = unit(pts[pts.length - 2], to); // direction of the last segment
   const [px, py] = [-uy, ux]; // perpendicular
-  const head = 14, half = 9;
   const [bx, by] = [x2 - ux * head, y2 - uy * head]; // base of the head
+  d += ` L ${x2 - ux * (head - width)} ${y2 - uy * (head - width)}`;
+  const [lx, ly] = [(from[0] + pts[1][0]) / 2, (from[1] + pts[1][1]) / 2];
   return (
-    <g class={`arrow ${on ? 'on' : ''}`} style={{ color }}>
-      <path d={`M ${x1} ${y1} L ${x2 - ux * 10} ${y2 - uy * 10}`} pathLength={1} fill="none" stroke="currentColor" stroke-width={width} />
+    <g class={`arrow ${on ? 'on' : ''} ${dashed ? 'dashed' : ''}`} style={{ color }}>
+      <path class="line" d={d} pathLength={dashed ? undefined : 1} fill="none"
+        style={dashed ? { strokeDasharray: `${width * 3} ${width * 2.5}` } : undefined} stroke="currentColor" stroke-width={width} />
       <path class="head" d={`M ${bx + px * half} ${by + py * half} L ${x2} ${y2} L ${bx - px * half} ${by - py * half} z`} fill="currentColor" />
       {label && (
-        <text x={(x1 + x2) / 2 + labelOffset[0]} y={(y1 + y2) / 2 + labelOffset[1]} fill="currentColor" font-size="22"
+        <text x={lx + labelOffset[0]} y={ly + labelOffset[1]} fill="currentColor" font-size="22"
           font-family="var(--mono)">{label}</text>
       )}
     </g>

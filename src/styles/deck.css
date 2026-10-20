@@ -8,10 +8,12 @@
   --sans: -apple-system, 'Segoe UI', Inter, Helvetica, Arial, sans-serif;
   --mono: 'Paper Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   /* slide padding; fixed px in print mode */
-  --pad-y: 6vh; --pad-x: 8vw; --inset-y: 3vh; --inset-x: 3vw; }
+  --pad-y: 4vh; --pad-x: 4.5vw; --inset-y: 2vh; --inset-x: 2vw;
+  /* type scales with the screen (2.6vw = 41.6px at 1600 wide), capped by height for wide screens */
+  --base: min(2.6vw, 4.2vh); }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
-  font: 32px/1.45 var(--sans); overflow: hidden; }
+  font: var(--base)/1.45 var(--sans); overflow: hidden; }
 
 .slide { display: none; position: absolute; inset: 0; padding: var(--pad-y) var(--pad-x);
   flex-direction: column; justify-content: center; }
@@ -48,12 +50,12 @@ th { color: var(--muted); font-weight: normal; }
 .fade.on { opacity: 1; }
 .caption { color: var(--muted); font-size: .75em; min-height: 1.5em; margin-top: .4em; }
 
-/* need more room? put class="fill" on the thing that needs it: the title moves to the
+/* need more room? put class="fill" on the thing that needs it (a direct child of the slide): the title moves to the
    top, padding shrinks, and that element (and an island's root inside it) gets the rest */
-.slide:has(.fill) { justify-content: flex-start; padding: 2.5vh 3vw 2vh; }
-.slide:has(.fill) > :is(h1, h2) { font-size: 1.1em; margin-bottom: .3em; }
-.fill, .fill > astro-island, .fill > astro-island > * { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-.mode-print .slide:has(.fill) { padding: 22px 48px 18px; }
+.slide:has(> .fill) { justify-content: flex-start; padding: 2.5vh 3vw 2vh; }
+.slide:has(> .fill) > :is(h1, h2) { font-size: 1.3em; margin-bottom: .3em; }
+.slide > .fill, .slide > .fill > astro-island, .slide > .fill > astro-island > * { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.mode-print .slide:has(> .fill) { padding: 22px 48px 18px; }
 
 /* full-slide images: wrap in <div class="full"> */
 .full { position: absolute; inset: var(--inset-y) var(--inset-x); display: flex; align-items: center; justify-content: center; }
@@ -130,7 +132,7 @@ pre.code { padding: .6em .4em; }
 
 /* ── print (?print, then cmd+p): one slide per 1600×900 page ───────────────── */
 @page { size: 1600px 900px; margin: 0; }
-.mode-print { --pad-y: 54px; --pad-x: 128px; --inset-y: 27px; --inset-x: 48px; }
+.mode-print { --pad-y: 36px; --pad-x: 72px; --inset-y: 18px; --inset-x: 32px; --base: 41.6px; }
 html:has(.mode-print), .mode-print { height: auto; overflow: visible; }
 .mode-print #nav { display: none; }
 .mode-print .slide { display: flex; position: relative; width: 1600px; height: 900px; overflow: hidden;

@@ -14,3 +14,5 @@ export * from './Walkthrough';
 export * from './Svg';
 export * from './Terminal';
 export * from './Zoom';
+export * from './StepCode';
+export * from './layout';
