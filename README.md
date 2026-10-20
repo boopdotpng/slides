@@ -40,7 +40,7 @@ islands, `public/` assets and `deck.config.ts` are never touched, so keep deck-s
 
 The URL keeps your place: `#7.3` is slide 7, step 3.
 `bun run build && bun run record` exports `deck.mp4`: it presses → through every step, waiting for each step's
-animations to finish plus `--hold` ms (default 1500). Options: `--out`, `--hold`, `--from 3 --to 7`, `--width`, `--height`, `--fps`.
+animations to finish plus `--hold` ms (default 1500). Options: `--out`, `--hold`, `--from 3 --to 7`, `--width`, `--height`, `--fps`, `--crf` (14), `--scale` (2× supersampling).
 JS-driven animations (`LatencyRace`, `auto` Walkthrough, `Terminal`) set their own `data-hold`; put `data-hold="5000"` on any
 element to make a slide linger. Needs Google Chrome and ffmpeg.
 
