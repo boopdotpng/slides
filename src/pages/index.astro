@@ -1,7 +1,11 @@
 ---
 import '../styles/deck.css';
 import '../styles/viz.css';
-import { title } from '../deck.config';
+import * as config from '../deck.config';
+
+const { title } = config;
+// optional per-deck type size, 1 = the template's (decks made before it don't export it)
+const scale = (config as { scale?: number }).scale ?? 1;
 import { readNotes } from '../deck/notes-file';
 
 // every file in src/slides is one slide, ordered by filename (01-, 02-, ...)
@@ -15,7 +19,7 @@ const slides = Object.entries(modules)
 const notes = readNotes(process.cwd(), slides.map((s) => s.name.replace(/\.\w+$/, '')));
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" style={`--scale: ${scale}`}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -14,7 +14,7 @@ bun dev                                # http://localhost:4321
 ```
 
 Then:
-1. set the title in `src/deck.config.ts`
+1. set the title in `src/deck.config.ts` (and `scale`, if the deck is dense: everything is sized from the screen)
 2. delete the demo slides in `src/slides/` (and `src/components/demos/`) once you've seen them
 3. write `src/slides/01-whatever.astro`, `02-….astro`, …
 

@@ -9,8 +9,9 @@
   --mono: 'Paper Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   /* slide padding; fixed px in print mode */
   --pad-y: 4vh; --pad-x: 4.5vw; --inset-y: 2vh; --inset-x: 2vw;
-  /* type scales with the screen (2.6vw = 41.6px at 1600 wide), capped by height for wide screens */
-  --base: min(2.6vw, 4.2vh); }
+  /* type scales with the screen: 37.8px at 1600×900 (print uses the same), capped by height for wide screens.
+     --scale is deck.config.ts's `scale` */
+  --base: calc(min(2.6vw, 4.2vh) * var(--scale, 1)); }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
   font: var(--base)/1.45 var(--sans); overflow: hidden; }
@@ -132,7 +133,7 @@ pre.code { padding: .6em .4em; }
 
 /* ── print (?print, then cmd+p): one slide per 1600×900 page ───────────────── */
 @page { size: 1600px 900px; margin: 0; }
-.mode-print { --pad-y: 36px; --pad-x: 72px; --inset-y: 18px; --inset-x: 32px; --base: 41.6px; }
+.mode-print { --pad-y: 36px; --pad-x: 72px; --inset-y: 18px; --inset-x: 32px; --base: calc(37.8px * var(--scale, 1)); }
 html:has(.mode-print), .mode-print { height: auto; overflow: visible; }
 .mode-print #nav { display: none; }
 .mode-print .slide { display: flex; position: relative; width: 1600px; height: 900px; overflow: hidden;
