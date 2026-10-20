@@ -1,11 +1,11 @@
 # slide deck (from boopdotpng/slides)
 
-Astro + Preact. `bun dev`, `bun run build`, `bun run check`. See README.md for keys and components.
+Astro + Preact. `bun dev`, `bun run build`, `bun run check`, `bun run record` (mp4 of the whole deck, see scripts/record.mjs). See README.md for keys and components.
 
 ## how it fits together
 
 - Every file in `src/slides/` is one slide (`.astro` or `.mdx`), ordered by filename (`01-`, `02-`, …). `pages/index.astro` renders them all as `<section class="slide">` on one page.
-- `deck/deck.ts` owns navigation. A slide's step count = number of `.step` elements + the sum of every `data-steps="N"`. Islands get the step through `useSlideStep` (`deck/hooks.ts`).
+- `deck/deck.ts` owns navigation; `deck/presenter.ts` is the ?presenter window; `deck/notes-file.ts` + `notes-server.ts` read / write notes.md. A slide's step count = number of `.step` elements + the sum of every `data-steps="N"`. Islands get the step through `useSlideStep` (`deck/hooks.ts`).
 - URL modes: `?presenter` (notes + previews, synced over BroadcastChannel), `?embed` (used by presenter iframes), `?print` (all slides, all steps revealed).
 
 ## conventions
@@ -16,7 +16,7 @@ Astro + Preact. `bun dev`, `bun run build`, `bun run check`. See README.md for k
 - Island-specific styles go in a `<style>` inside the island, scoped by its root class.
 - Colors: CSS vars in `styles/deck.css` (`--accent`, `--muted`, …) and `COLORS` in `viz/color.ts`. Code font is `var(--mono)` (Paper Mono).
 - Real numbers over made-up ones: export json into `public/data/` with a script and load it with `useData`.
-- Speaker notes: `<aside class="notes">` in the slide.
+- Speaker notes: a `# <file name>` section in `src/slides/notes.md` (markdown; the presenter window edits it under `bun dev` via `deck/notes-server.ts`), or `<aside class="notes">` in the slide.
 - Lowercase, terse slide text.
 
 ## checking work

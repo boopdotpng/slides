@@ -73,11 +73,12 @@ export function Strip({ values, scale, height = 22, width, vertical = false, lab
 }
 
 // ── matrix as a grid of cells (small matrices: colors animate) ───────────────
-/** null cells are drawn hatched (masked). hlRow / hlCol brighten a label. */
-export function Heatmap({ data, color, rowLabels, colLabels, cell = 26, hlRow, hlCol, tipFn, class: cls = '', gap = 2 }: {
+/** null cells are drawn hatched (masked). hlRow / hlCol brighten a label; hlRow / hlCol / hlCells mark cells .on */
+export function Heatmap({ data, color, rowLabels, colLabels, cell = 26, hlRow, hlCol, hlCells = [], tipFn, class: cls = '', gap = 2 }: {
   data: (number | null)[][]; color: (v: number, r: number, c: number) => string;
   rowLabels?: ComponentChildren[]; colLabels?: ComponentChildren[]; cell?: number;
-  hlRow?: number; hlCol?: number; tipFn?: (r: number, c: number, v: number | null) => string; class?: string; gap?: number;
+  hlRow?: number; hlCol?: number; hlCells?: [number, number][];
+  tipFn?: (r: number, c: number, v: number | null) => string; class?: string; gap?: number;
 }) {
   const cols = data[0]?.length ?? 0;
   return (
@@ -92,7 +93,7 @@ export function Heatmap({ data, color, rowLabels, colLabels, cell = 26, hlRow, h
       {data.map((row, r) => <>
         {rowLabels && <div class={`rl ${r === hlRow ? 'hl' : ''}`}>{rowLabels[r]}</div>}
         {row.map((v, c) => (
-          <div class={`hc ${v === null ? 'masked' : ''} ${r === hlRow || c === hlCol ? 'on' : ''}`}
+          <div class={`hc ${v === null ? 'masked' : ''} ${r === hlRow || c === hlCol || hlCells.some(([a, b]) => a === r && b === c) ? 'on' : ''}`}
             style={{ background: v === null ? undefined : color(v, r, c) }}
             onMouseMove={tipFn ? (e) => tip(e, tipFn(r, c, v)) : undefined}
             onMouseLeave={tipFn ? () => tip(null) : undefined} />

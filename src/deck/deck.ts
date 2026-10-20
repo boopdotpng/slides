@@ -82,7 +82,7 @@ export function initDeck() {
   function next() {
     const s = slides[i];
     if (stepOf(s) < total(s)) setStep(stepOf(s) + 1);
-    else show(i + 1);
+    else if (i < slides.length - 1) show(i + 1); // the end stays the end
   }
 
   function prev() {
@@ -111,8 +111,8 @@ export function initDeck() {
   // ── slide picker ──────────────────────────────────────────────────────────
   const title = (s: HTMLElement) =>
     s.querySelector<HTMLElement>('[data-title]')?.dataset.title ||
-    s.querySelector('h1, h2')?.textContent?.trim() ||
-    s.querySelector('img')?.alt ||
+    s.querySelector(':is(h1, h2):not(.notes *)')?.textContent?.trim() ||
+    s.querySelector<HTMLImageElement>('img:not(.notes *)')?.alt ||
     (s.dataset.file ?? '').replace(/^\d+-|\.\w+$/g, '');
 
   const picker = document.createElement('div');
@@ -164,6 +164,7 @@ export function initDeck() {
   if (mode !== 'embed') {
     document.addEventListener('keydown', (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if ((e.target as HTMLElement).closest?.('input, textarea, [contenteditable]')) return;
       if (pickerOpen()) { pickerKey(e); e.preventDefault(); return; }
       switch (e.key) {
         case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown': case 'l': case 'j':

@@ -4,9 +4,12 @@
  * The page still holds the whole deck (hidden), so navigation and step counting
  * are the same code as the deck window. On top it shows:
  *   - the current slide and what the next press will show, as ?embed iframes
- *   - the slide's notes: every <aside class="notes"> in it
+ *   - the slide's notes: every <aside class="notes"> in it, then its section of
+ *     src/slides/notes.md as markdown. Under `bun dev`, click the notes (or press e)
+ *     to edit that section; it saves as you type (deck/notes-server.ts). esc to finish.
  *   - elapsed time (click to reset) and the clock
  */
+import { marked } from 'marked';
 
 // slides are laid out at this size in the previews, then scaled to fit
 const W = 1600, H = 900;
@@ -30,7 +33,9 @@ export function initPresenter({ slides, position, onChange }: {
         <span class="pv-timer" title="click to reset">0:00</span>
         <span class="pv-clock"></span>
       </div>
+      <div class="pv-label">notes <span class="pv-save"></span></div>
       <div class="pv-notes"></div>
+      <textarea class="pv-edit" spellcheck="true" hidden></textarea>
     </div>`;
   document.body.append(root);
 
@@ -38,6 +43,8 @@ export function initPresenter({ slides, position, onChange }: {
   const end = root.querySelector<HTMLElement>('.pv-end')!;
   const pos = root.querySelector<HTMLElement>('.pv-pos')!;
   const notes = root.querySelector<HTMLElement>('.pv-notes')!;
+  const edit = root.querySelector<HTMLTextAreaElement>('.pv-edit')!;
+  const saveState = root.querySelector<HTMLElement>('.pv-save')!;
   const timer = root.querySelector<HTMLElement>('.pv-timer')!;
   const clock = root.querySelector<HTMLElement>('.pv-clock')!;
 
@@ -51,9 +58,73 @@ export function initPresenter({ slides, position, onChange }: {
     end.style.display = atEnd ? 'flex' : 'none';
     if (!atEnd) nxt.src = embed(step < total ? `${slide + 1}.${step + 1}` : `${slide + 2}`);
     pos.textContent = `${slide + 1} / ${slides.length}` + (total ? `  ·  step ${step} / ${total}` : '');
-    const n = [...slides[slide].querySelectorAll('.notes')].map((e) => e.innerHTML).join('');
-    notes.innerHTML = n || '<span class="pv-none">no notes</span>';
+    if (editing && editing !== nameOf(slide)) { flush(); startEdit(); } // follow the deck while typing
+    renderNotes();
   }
+
+  // ── notes ─────────────────────────────────────────────────────────────────
+  const md: Record<string, string> = JSON.parse(document.getElementById('deck-notes')?.textContent || '{}');
+  const nameOf = (i: number) => (slides[i].dataset.file ?? '').replace(/\.\w+$/, '');
+  const canEdit = import.meta.env.DEV;
+  let editing: string | null = null; // slide name whose notes are in the textarea
+  let timer_: number | undefined;
+
+  function renderNotes() {
+    const { slide } = position();
+    const inline = [...slides[slide].querySelectorAll('.notes')].map((e) => e.innerHTML).join('');
+    const own = md[nameOf(slide)] ? (marked.parse(md[nameOf(slide)], { async: false }) as string) : '';
+    notes.innerHTML = inline + own ||
+      `<span class="pv-none">no notes${canEdit ? ' · click or press e to write some' : ''}</span>`;
+  }
+
+  function startEdit() {
+    if (!canEdit) return;
+    editing = nameOf(position().slide);
+    edit.value = md[editing] ?? '';
+    notes.hidden = true;
+    edit.hidden = false;
+    edit.focus();
+  }
+
+  function stopEdit() {
+    flush();
+    editing = null;
+    edit.hidden = true;
+    notes.hidden = false;
+    renderNotes();
+  }
+
+  async function save(slide: string, text: string) {
+    saveState.textContent = 'saving…';
+    try {
+      const r = await fetch('/__deck/notes', { method: 'POST', body: JSON.stringify({ slide, md: text }) });
+      if (!r.ok) throw new Error(await r.text());
+      saveState.textContent = 'saved';
+    } catch (e) {
+      saveState.textContent = `not saved: ${e}`;
+    }
+  }
+
+  function flush() {
+    if (timer_ === undefined || !editing) return;
+    clearTimeout(timer_);
+    timer_ = undefined;
+    save(editing, md[editing] ?? '');
+  }
+
+  edit.oninput = () => {
+    md[editing!] = edit.value;
+    saveState.textContent = '…';
+    clearTimeout(timer_);
+    timer_ = window.setTimeout(() => { timer_ = undefined; save(editing!, edit.value); }, 400);
+  };
+  edit.onkeydown = (e) => { if (e.key === 'Escape') { e.preventDefault(); stopEdit(); } };
+  edit.onblur = stopEdit;
+  notes.onclick = (e) => { if (!(e.target as HTMLElement).closest('a')) startEdit(); };
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'e' && !editing && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); startEdit(); }
+  });
+  addEventListener('beforeunload', flush);
 
   // scale each W×H iframe to its box
   for (const frame of root.querySelectorAll<HTMLElement>('.pv-frame')) {

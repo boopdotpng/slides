@@ -24,6 +24,6 @@ export function Terminal({ lines, msPerChar = 25 }: { lines: string[]; msPerChar
     return () => clearInterval(id);
   }, [full]);
   return (
-    <pre class="term">{shown}<span class="cursor">▍</span></pre>
+    <pre class="term" data-hold={full.length * msPerChar + 500}>{shown}<span class="cursor">▍</span></pre>
   );
 }

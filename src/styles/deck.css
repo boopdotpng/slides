@@ -114,6 +114,12 @@ pre.code { padding: .6em .4em; }
 #presenter .pv-notes { flex: 1; overflow: auto; font-size: 22px; line-height: 1.5; padding-right: 8px; }
 #presenter .pv-notes p { margin: 0 0 .6em; }
 #presenter .pv-none { color: var(--muted); }
+#presenter .pv-notes { cursor: text; }
+#presenter .pv-notes ul, #presenter .pv-notes ol { margin: 0 0 .6em; }
+#presenter .pv-edit { flex: 1; resize: none; font: 18px/1.5 var(--mono); color: var(--fg); background: var(--panel);
+  border: 1px solid var(--border); border-radius: 8px; padding: 12px; outline: none; }
+#presenter .pv-edit:focus { border-color: var(--accent); }
+#presenter .pv-save { text-transform: none; letter-spacing: 0; margin-left: .6em; }
 
 /* ── print (?print, then cmd+p): one slide per 1600×900 page ───────────────── */
 @page { size: 1600px 900px; margin: 0; }

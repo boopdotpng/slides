@@ -52,7 +52,7 @@ export function LatencyRace({ rows, slowMs = 4000, fastMs = 120, track = 'cpu â‡
   });
 
   return (
-    <div class="race" ref={root}>
+    <div class="race" ref={root} data-hold={slowMs * 1.5}>
       <table>
         <tr><th></th><th class="race-h">{track}</th><th>latency</th><th class="num">{count}</th></tr>
         {rows.map((r, i) => (

@@ -28,12 +28,38 @@ export type WalkStep = {
   text?: ComponentChildren;
 };
 
+export type StateVar = { name: string; note?: string; reg?: boolean };
+
+/**
+ * name / value / note rows; rows named in `changed` flash. Walkthrough uses it,
+ * or use it on its own beside your own code panes.
+ */
+export function StateTable({ vars, state, changed = [] }: {
+  /** rows, in order; reg colors the name like a register */
+  vars: StateVar[];
+  state: Record<string, ComponentChildren>;
+  changed?: string[];
+}) {
+  return (
+    <table class="state-table">
+      {vars.map((v) => (
+        <tr class={changed.includes(v.name) ? 'changed' : ''}>
+          <td class={v.reg ? 'tok-reg' : ''}>{v.name}</td>
+          <td>{state[v.name] ?? '—'}</td>
+          <td class="muted">{v.note}</td>
+        </tr>
+      ))}
+    </table>
+  );
+}
+
 export function Walkthrough({ code, lang, steps, vars = [], initial = {}, auto, aside }: {
-  code: string;
+  /** or a function of the step, e.g. to add comments to lines once they've run */
+  code: string | ((step: number) => string);
   lang: Lang;
   steps: WalkStep[];
   /** state rows, in order; reg colors the name like a register */
-  vars?: { name: string; note?: string; reg?: boolean }[];
+  vars?: StateVar[];
   initial?: Record<string, ComponentChildren>;
   /** ms per step: run on a loop instead of on key presses */
   auto?: number;
@@ -48,20 +74,12 @@ export function Walkthrough({ code, lang, steps, vars = [], initial = {}, auto, 
   const state = Object.assign({}, initial, ...steps.slice(0, step + 1).map((s) => s.set ?? {}));
 
   return (
-    <div class="walk" ref={root}>
+    <div class="walk" ref={root} data-hold={auto ? auto * steps.length : undefined}>
       <div class="walk-cols">
-        <Code lang={lang} code={code} hl={cur.hl} />
+        <Code lang={lang} code={typeof code === 'function' ? code(step) : code} hl={cur.hl} />
         {(vars.length > 0 || aside) && (
           <div class="walk-state">
-            <table>
-              {vars.map((v) => (
-                <tr class={cur.set && v.name in cur.set ? 'changed' : ''}>
-                  <td class={v.reg ? 'tok-reg' : ''}>{v.name}</td>
-                  <td>{state[v.name] ?? '—'}</td>
-                  <td class="muted">{v.note}</td>
-                </tr>
-              ))}
-            </table>
+            {vars.length > 0 && <StateTable vars={vars} state={state} changed={Object.keys(cur.set ?? {})} />}
             {aside?.(step)}
           </div>
         )}

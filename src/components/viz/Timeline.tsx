@@ -11,7 +11,7 @@ import type { ComponentChildren } from 'preact';
  */
 export type TimelineRow = { label: ComponentChildren; note?: ComponentChildren; start: number; end: number; color?: string };
 
-export function Timeline({ rows, units, msPerUnit = 280, title, run = 0, after }: {
+export function Timeline({ rows, units, msPerUnit = 280, title, run = 0, after, afterTitle }: {
   rows: TimelineRow[];
   /** length of the axis (e.g. cycles); one grid cell per unit */
   units: number;
@@ -21,10 +21,11 @@ export function Timeline({ rows, units, msPerUnit = 280, title, run = 0, after }
   run?: string | number;
   /** extra cell per row, right of the axis (e.g. a ✓ when it finishes) */
   after?: (row: TimelineRow, i: number) => ComponentChildren;
+  afterTitle?: ComponentChildren;
 }) {
   return (
     <table class="timeline" style={{ '--cell': `${100 / units}%` }}>
-      <tr><th></th><th class="tl-h">{title}</th>{after && <th></th>}</tr>
+      <tr><th></th><th class="tl-h">{title}</th>{after && <th>{afterTitle}</th>}</tr>
       {rows.map((r, i) => (
         <tr>
           <td class="tl-label">{r.label}{r.note && <span class="muted tl-note">{r.note}</span>}</td>

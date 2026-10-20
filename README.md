@@ -20,6 +20,13 @@ Then:
 
 `bun run build` makes a static site in `dist/`. `bun run check` typechecks.
 
+## keeping decks up to date
+
+Edit the template, then `bun run sync ~/path/to/deck [more decks…]` from here. It overwrites the
+template's own files in each deck (`src/deck/`, `pages/index.astro`, `styles/`, `Code.tsx`, `viz/`,
+fonts, `scripts/`, configs, these docs; see `scripts/sync.mjs`) and merges package.json. Slides,
+islands, `public/` assets and `deck.config.ts` are never touched, so keep deck-specific code there.
+
 ## presenting
 
 | key | |
@@ -27,11 +34,16 @@ Then:
 | → space l j | next step / slide |
 | ← h k | back (going back into a slide lands fully revealed) |
 | g | slide picker: type a number + enter, or ↑↓ + enter (or click the counter) |
-| p | presenter window: notes, next-step preview, timer. Synced both ways with the deck |
+| p | presenter window: notes (editable under `bun dev`: click or e), next-step preview, timer. Synced both ways with the deck |
 | f | fullscreen |
 | home / end | first / last |
 
 The URL keeps your place: `#7.3` is slide 7, step 3.
+`bun run build && bun run record` exports `deck.mp4`: it presses → through every step, waiting for each step's
+animations to finish plus `--hold` ms (default 1500). Options: `--out`, `--hold`, `--from 3 --to 7`, `--width`, `--height`, `--fps`.
+JS-driven animations (`LatencyRace`, `auto` Walkthrough, `Terminal`) set their own `data-hold`; put `data-hold="5000"` on any
+element to make a slide linger. Needs Google Chrome and ffmpeg.
+
 `?print` shows every slide fully revealed, one per page: cmd+p → save as pdf (1600×900 pages, backgrounds on).
 
 ## writing slides
@@ -52,6 +64,21 @@ import MyThing from '../components/MyThing.tsx';
 <aside class="notes">only visible in the presenter window</aside>
 ```
 
+Speaker notes: under `bun dev`, open the presenter window (p), click the notes
+(or press e) and type. Markdown, saved as you type, esc to finish; the deck
+doesn't reload. They're stored in `src/slides/notes.md`, one `#` heading per
+slide (file name without the extension, or a slide number), which you can also
+edit by hand. Notes can also go in the slide as `<aside class="notes">`.
+
+```md
+# 1
+say hi, ask who's written assembly before
+
+# 03-bytes
+- step through slowly
+- point at the opcode bits
+```
+
 Classes in `styles/deck.css`: `step`, `cols`, `small`, `muted`, `accent`,
 `center`, `full`, `caption`, `fade` + `on`, `notes`. Theme colors and fonts are
 the variables at the top of that file.
@@ -69,7 +96,7 @@ Copy `src/components/TemplateIsland.tsx`. Hooks (`src/deck/hooks.ts`):
 
 - `Code`: tiny highlighter for `asm` (risc-v / x86 / arm names), `c`, `cpp`, `py`. `hl` highlights lines and dims the rest; `highlight(line, lang)` for inline.
 - `components/viz` (see the demo slides for each one in use):
-  - `Walkthrough`: code + state table + caption, stepped or `auto`
+  - `Walkthrough`: code + state table + caption, stepped or `auto`; `StateTable` on its own
   - `BitFields`, `Bytes`: binary words split into fields, memory as byte cells
   - `Timeline`: bars growing on a time axis (pipelines, schedules)
   - `LatencyRace`: log-scaled ping dots with honest counters
