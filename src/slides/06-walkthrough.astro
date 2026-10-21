@@ -9,7 +9,9 @@ _start:
     li   a7, 64
     ecall`;
 ---
-<h2>Walkthrough: code + state + caption</h2>
+<header>
+  <h2>Walkthrough: code + state + caption</h2>
+</header>
 <div data-steps="5">
   <Walkthrough client:load lang="asm" code={src}
     vars={[{ name: 'pc' }, { name: 'a0', note: 'fd', reg: true }, { name: 'a1', note: 'buf', reg: true },

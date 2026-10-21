@@ -4,7 +4,9 @@ import Math from '../components/Math.astro';
 const inline = String.raw`\operatorname{softmax}(QK^\top/\sqrt{d})\,V`;
 const block = String.raw`\text{out}_i = \sum_j \frac{e^{q_i \cdot k_j / \sqrt{d}}}{\sum_l e^{q_i \cdot k_l / \sqrt{d}}}\; v_j`;
 ---
-<h2>math: katex, rendered at build time</h2>
+<header>
+  <h2>math: katex, rendered at build time</h2>
+</header>
 <p>inline <Math tex={inline} /> or a block:</p>
 <Math tex={block} block />
 <p class="muted small">tex lives in frontmatter as <code>String.raw</code> and goes in as <code>tex=</code>. static html, no client js. <code>throwOnError</code> is on, so a typo fails the build instead of the talk</p>
