@@ -15,8 +15,8 @@ const Label = ({ x, y, size, muted, children }: { x: number; y: number; size: nu
   <text x={x} y={y} font-size={size} fill={muted ? 'var(--muted)' : 'var(--fg)'} font-weight={muted ? 400 : 700}>{children}</text>
 );
 // every view is drawn in ZOOM_W × ZOOM_H, whatever size it ends up on screen
-const Frame = ({ color = '#333' }: { color?: string }) => (
-  <rect width={ZOOM_W} height={ZOOM_H} rx={36} fill="#141414" stroke={color} stroke-width={5} />
+const Frame = ({ color = 'var(--line)' }: { color?: string }) => (
+  <rect width={ZOOM_W} height={ZOOM_H} rx={36} fill="var(--panel)" stroke={color} stroke-width={5} />
 );
 
 function Core({ n }: { n: number }) {
@@ -26,7 +26,7 @@ function Core({ n }: { n: number }) {
       <Label x={60} y={120} size={80}>core {n}</Label>
       {['pc', 'registers', 'l1 cache', 'alu'].map((t, i) => (
         <g>
-          <rect x={60 + i * 380} y={240} width={340} height={300} rx={20} fill="#1c1c1c" />
+          <rect x={60 + i * 380} y={240} width={340} height={300} rx={20} fill="var(--surface)" />
           <text x={230 + i * 380} y={400} font-size={44} fill="var(--fg)" text-anchor="middle">{t}</text>
         </g>
       ))}
@@ -50,12 +50,12 @@ export default function ZoomDemo() {
   return (
     <div ref={root}>
       <ZoomStage camera={CAMERA[step]}>
-        <rect width={ZOOM_W} height={ZOOM_H} rx={24} fill="#0f0f0f" stroke="#262626" stroke-width={2} />
+        <rect width={ZOOM_W} height={ZOOM_H} rx={24} fill="var(--sunken)" stroke="var(--border)" stroke-width={2} />
         <Label x={60} y={90} size={48}>machine</Label>
         <ZoomView at={CPU}><Cpu /></ZoomView>
-        <rect x={1020} y={140} width={520} height={250} rx={20} fill="#141414" stroke="#333" stroke-width={3} />
+        <rect x={1020} y={140} width={520} height={250} rx={20} fill="var(--panel)" stroke="var(--line)" stroke-width={3} />
         <Label x={1060} y={210} size={40}>ram</Label>
-        <rect x={1020} y={430} width={520} height={250} rx={20} fill="#141414" stroke="#333" stroke-width={3} />
+        <rect x={1020} y={430} width={520} height={250} rx={20} fill="var(--panel)" stroke="var(--line)" stroke-width={3} />
         <Label x={1060} y={500} size={40}>disk</Label>
       </ZoomStage>
       <div class="caption">{CAPTIONS[step]}</div>
