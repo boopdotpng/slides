@@ -2,7 +2,7 @@
 
 Notes from `src/slides/notes.md`: one `#` heading per slide, by file name (or slide number).
 
-# 4
+# 04-markdown
 
 This one is keyed by number. **Markdown** works:
 
