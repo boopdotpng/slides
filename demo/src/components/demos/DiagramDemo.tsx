@@ -1,7 +1,7 @@
 /** @jsxImportSource preact */
 import { useRef } from 'preact/hooks';
-import { Arrow, Box, COLORS, Reveal, Terminal } from '../viz';
-import { useSlideStep } from '../../deck/hooks';
+import { Arrow, Box, COLORS, Reveal, Terminal } from 'slides/viz';
+import { useSlideStep } from 'slides/hooks';
 
 /** Box + Arrow + Terminal: a syscall round trip. Steps 0–4. */
 

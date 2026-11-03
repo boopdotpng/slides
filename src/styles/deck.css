@@ -1,9 +1,9 @@
-/* text font: Inter (OFL, public/fonts/Inter-OFL.txt), served locally so linux / windows don't fall back to an arial
+/* text font: Inter (OFL, src/fonts/Inter-OFL.txt), served locally so linux / windows don't fall back to an arial
    clone. macs still use the system font (-apple-system comes first in --sans) */
-@font-face { font-family: 'Inter'; src: url('/fonts/Inter.woff2') format('woff2');
+@font-face { font-family: 'Inter'; src: url('../fonts/Inter.woff2') format('woff2');
   font-weight: 100 900; font-style: normal; font-display: block; }
-/* code font: Paper Mono (OFL, public/fonts/PaperMono-OFL.txt), served locally */
-@font-face { font-family: 'Paper Mono'; src: url('/fonts/PaperMono.woff2') format('woff2');
+/* code font: Paper Mono (OFL, src/fonts/PaperMono-OFL.txt), served locally */
+@font-face { font-family: 'Paper Mono'; src: url('../fonts/PaperMono.woff2') format('woff2');
   font-weight: 100 900; font-style: normal; font-display: block; }
 
 /* theme: every color a deck uses comes from here (or COLORS in viz/color.ts, which points back here).

@@ -1,8 +1,8 @@
 /** @jsxImportSource preact */
 import { useRef } from 'preact/hooks';
-import Code from '../Code';
-import { BitFields, Bytes, COLORS, hex } from '../viz';
-import { useSlideStep } from '../../deck/hooks';
+import Code from 'slides/Code';
+import { BitFields, Bytes, COLORS, hex } from 'slides/viz';
+import { useSlideStep } from 'slides/hooks';
 
 /** BitFields + Bytes + Code: one risc-v instruction from bytes to meaning. Steps 0–4. */
 

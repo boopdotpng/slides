@@ -1,15 +1,16 @@
 ---
 import '../styles/deck.css';
 import '../styles/viz.css';
-import * as config from '../deck.config';
+// the deck's own files, root-relative: this page is injected into the deck by the slides() integration
+import * as config from '/src/deck.config';
 
 const { title } = config;
 // optional per-deck type size, 1 = the template's (decks made before it don't export it)
 const scale = (config as { scale?: number }).scale ?? 1;
 import { readNotes } from '../deck/notes-file';
 
-// every file in src/slides is one slide, ordered by filename (01-, 02-, ...)
-const modules = import.meta.glob<{ default: any }>('../slides/*.{astro,mdx}', { eager: true });
+// every file in the deck's src/slides is one slide, ordered by filename (01-, 02-, ...)
+const modules = import.meta.glob<{ default: any }>('/src/slides/*.{astro,mdx}', { eager: true });
 const slides = Object.entries(modules)
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([path, mod]) => ({ name: path.split('/').pop()!, Slide: mod.default }));

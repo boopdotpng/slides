@@ -1,7 +1,7 @@
 /** @jsxImportSource preact */
 import { useRef } from 'preact/hooks';
-import { Bars, COLORS, Heatmap, Shape, Strip, Tok, diverging, fmt, range, sequential } from '../viz';
-import { useSlideStep } from '../../deck/hooks';
+import { Bars, COLORS, Heatmap, Shape, Strip, Tok, diverging, fmt, range, sequential } from 'slides/viz';
+import { useSlideStep } from 'slides/hooks';
 
 /**
  * The data marks, on made-up numbers. For real ones, export json into

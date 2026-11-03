@@ -1,8 +1,8 @@
 /** @jsxImportSource preact */
 import { useRef } from 'preact/hooks';
-import { highlight } from '../Code';
-import { Timeline } from '../viz';
-import { useSlideStep } from '../../deck/hooks';
+import { highlight } from 'slides/Code';
+import { Timeline } from 'slides/viz';
+import { useSlideStep } from 'slides/hooks';
 
 /** Timeline: the same four instructions, in order (step 0) vs out of order (step 1). */
 

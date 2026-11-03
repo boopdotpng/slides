@@ -7,15 +7,31 @@
       "dependencies": {
         "@astrojs/mdx": "^8.0.1",
         "@astrojs/preact": "^6.0.5",
-        "astro": "^7.3.2",
         "katex": "^0.19.0",
         "marked": "^18.1.1",
+        "playwright-core": "^1",
         "preact": "^10.29.2",
       },
       "devDependencies": {
         "@astrojs/check": "^0.9.11",
         "@types/node": "^26.6.5",
-        "playwright-core": "^1",
+        "astro": "^7.3.2",
+        "typescript": "^6",
+      },
+      "peerDependencies": {
+        "astro": "^7.3.2",
+      },
+    },
+    "demo": {
+      "name": "slides-demo",
+      "dependencies": {
+        "astro": "^7.3.2",
+        "preact": "^10.29.2",
+        "slides": "workspace:*",
+      },
+      "devDependencies": {
+        "@astrojs/check": "^0.9.11",
+        "@types/node": "^26.6.5",
         "typescript": "^6",
       },
     },
@@ -642,6 +658,10 @@
     "simple-code-frame": ["simple-code-frame@1.3.0", "", { "dependencies": { "kolorist": "^1.6.0" } }, "sha512-MB4pQmETUBlNs62BBeRjIFGeuy/x6gGKh7+eRUemn1rCFhqo7K+4slPqsyizCbcbYLnaYqaoZ2FWsZ/jN06D8w=="],
 
     "sisteransi": ["sisteransi@1.0.5", "", {}, "sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg=="],
+
+    "slides": ["slides@root:", { "bin": { "slides": "scripts/slides.mjs", "slides-colors": "scripts/colors.mjs", "slides-shot": "scripts/shot.mjs", "slides-record": "scripts/record.mjs" } }],
+
+    "slides-demo": ["slides-demo@workspace:demo"],
 
     "smol-toml": ["smol-toml@1.9.1", "", {}, "sha512-j7WyPdf0CJoutMzMoPLF/bVXHtKZIT9Rb4eGeEbWw8X2t5oirjPgpL+OpaENZrILYaXqYwnVH+qgUwVbl+pUJQ=="],
 

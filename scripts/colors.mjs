@@ -1,14 +1,15 @@
+#!/usr/bin/env bun
 /**
  * Fail on color literals (#hex, rgb(), rgba()) outside the palette, so every color comes from styles/deck.css and a
- * theme change reaches every slide. Runs as part of `bun run check`; `bun scripts/colors.mjs` alone also works.
+ * theme change reaches every slide. Runs as part of `bun run check`; `bunx slides-colors` alone also works.
  *
  * Use var(--x) / COLORS.x instead, and color-mix(in srgb, var(--x) 30%, transparent) for tints. A literal that isn't
  * a theme color (a WebGL texture's white base, a mask) can stay if its line says `colors-ok`.
  */
 import { readFile, readdir } from 'node:fs/promises';
-import { join, relative, resolve } from 'node:path';
+import { join, relative } from 'node:path';
 
-const root = resolve(import.meta.dirname, '..');
+const root = process.cwd(); // the deck (or the engine, in the template repo)
 const ALLOWED = ['src/styles/deck.css', 'src/components/viz/color.ts']; // where the palette lives
 const LITERAL = /#[0-9a-fA-F]{3,8}\b|\brgba?\(/;
 

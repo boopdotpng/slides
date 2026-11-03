@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 /**
  * Every structural change to src/slides goes through here, so the one rule holds: a file's number is its slide
  * number (the #N in the URL, the counter, the grid). "Slide 22" is src/slides/22-*.
@@ -20,7 +21,7 @@ import { execFileSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 
-const dir = resolve(import.meta.dirname, '../src/slides');
+const dir = resolve('src/slides'); // the deck's, from the deck's dir
 const NOTES = join(dir, 'notes.md');
 const stem = (f) => f.replace(/\.\w+$/, '');
 const ext = (f) => f.match(/\.\w+$/)[0];

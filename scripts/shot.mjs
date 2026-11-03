@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 /**
  * Screenshot slides at given steps, to check them without a person at the browser.
  *

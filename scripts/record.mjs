@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 /**
  * Record the deck to a video, as if someone pressed → through every step and
  * waited for each step's animations to finish before the next press.
@@ -62,7 +63,7 @@ const { values: opt } = parseArgs({
 const W = Number(opt.width), H = Number(opt.height), FPS = Number(opt.fps), HOLD = Number(opt.hold), SCALE = Number(opt.scale);
 const GAP = Number(opt.gap), JOBS = Math.max(1, Number(opt.jobs));
 const MAX_MB = opt['max-mb'] ? Number(opt['max-mb']) : opt.discord || opt.shrink ? 10 : 0;
-const dist = join(import.meta.dirname, '..', 'dist');
+const dist = join(process.cwd(), 'dist');
 
 if (spawnSync('ffmpeg', ['-version']).error) throw new Error('ffmpeg not found: brew install ffmpeg');
 const ffmpeg = (args) => new Promise((ok, fail) => {

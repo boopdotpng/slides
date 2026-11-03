@@ -1,5 +1,5 @@
 ---
-import Math from '../components/Math.astro';
+import Math from 'slides/Math';
 // keep tex in frontmatter with String.raw: in an attribute, \f and friends become escape characters
 const inline = String.raw`\operatorname{softmax}(QK^\top/\sqrt{d})\,V`;
 const block = String.raw`\text{out}_i = \sum_j \frac{e^{q_i \cdot k_j / \sqrt{d}}}{\sum_l e^{q_i \cdot k_l / \sqrt{d}}}\; v_j`;

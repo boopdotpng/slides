@@ -1,29 +1,48 @@
 {
   "name": "slides",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
+  "description": "the deck engine: an astro integration plus Code, Math, viz, hooks and the deck scripts",
+  "workspaces": [
+    "demo"
+  ],
+  "exports": {
+    ".": "./src/integration.ts",
+    "./Code": "./src/components/Code.tsx",
+    "./Math": "./src/components/Math.astro",
+    "./viz": "./src/components/viz/index.ts",
+    "./hooks": "./src/deck/hooks.ts"
+  },
+  "bin": {
+    "slides": "scripts/slides.mjs",
+    "slides-colors": "scripts/colors.mjs",
+    "slides-shot": "scripts/shot.mjs",
+    "slides-record": "scripts/record.mjs"
+  },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "check": "bun scripts/slides.mjs check && bun scripts/colors.mjs && astro check",
-    "record": "bun scripts/record.mjs",
-    "sync": "bun scripts/sync.mjs",
-    "shot": "bun scripts/shot.mjs",
-    "slides": "bun scripts/slides.mjs"
+    "dev": "cd demo && bun run dev",
+    "build": "cd demo && bun run build",
+    "preview": "cd demo && bun run preview",
+    "check": "bun scripts/colors.mjs && tsc --noEmit -p . && cd demo && bun run check",
+    "shot": "cd demo && bun run shot",
+    "record": "cd demo && bun run record",
+    "slides": "cd demo && bun run slides"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.1",
     "@astrojs/preact": "^6.0.5",
-    "astro": "^7.3.2",
     "katex": "^0.19.0",
     "marked": "^18.1.1",
-    "preact": "^10.29.2"
+    "preact": "^10.29.2",
+    "playwright-core": "^1"
+  },
+  "peerDependencies": {
+    "astro": "^7.3.2"
   },
   "devDependencies": {
+    "astro": "^7.3.2",
     "@astrojs/check": "^0.9.11",
     "@types/node": "^26.6.5",
-    "playwright-core": "^1",
     "typescript": "^6"
   }
 }

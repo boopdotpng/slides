@@ -1,8 +1,8 @@
 /** @jsxImportSource preact */
 import type { ComponentChildren } from 'preact';
 import { useRef } from 'preact/hooks';
-import { COLORS, nest, ZOOM_FULL, ZOOM_H, ZOOM_W, ZoomStage, ZoomView, type Rect } from '../viz';
-import { useSlideStep } from '../../deck/hooks';
+import { COLORS, nest, ZOOM_FULL, ZOOM_H, ZOOM_W, ZoomStage, ZoomView, type Rect } from 'slides/viz';
+import { useSlideStep } from 'slides/hooks';
 
 /** ZoomStage: machine → cpu → core 0 → back out. Steps 0–3. */
 
