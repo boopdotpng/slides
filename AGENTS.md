@@ -1,6 +1,6 @@
 # slide decks (the boopdotpng/slides engine)
 
-Astro + Preact. A deck is a directory with `astro.config.mjs` (`integrations: [slides()]`), `src/deck.config.ts`, `src/slides/`, its own islands in `src/components/`, and `public/`. Everything else (navigation, the page, styles, `Code`, `Math`, `viz`, the scripts) is the engine, the `slides` package: `engine/` in the decks repo (a git submodule of boopdotpng/slides), the repo root in boopdotpng/slides itself (whose demo deck is `demo/`). Engine paths below are relative to the engine.
+Astro + Preact. A deck is a directory with `astro.config.mjs` (`integrations: [slides()]`), `src/deck.config.ts`, `src/slides/`, its own islands in `src/components/`, and `public/`. Everything else (navigation, the page, styles, `Code`, `Math`, `viz`, the scripts) is the engine, the `slides` package: `engine/` in the decks repo (a git submodule of boopdotpng/slides), the repo root in boopdotpng/slides itself (which has no deck of its own). Engine paths below are relative to the engine.
 
 In a deck: `bun dev`, `bun run build`, `bun run check`, `bun run record` (mp4 of the whole deck, slides recorded in parallel; `--discord` for a <10 MB copy; see scripts/record.mjs), `bun run shot 3.2 14-stack.1` (png of a slide at a step against a running dev server, see scripts/shot.mjs). See the engine's README.md for keys and components.
 
@@ -29,7 +29,7 @@ bun run slides rm <slide>                                # deletes it and its no
 
 ## conventions
 
-- Islands render purely from `step` (no accumulated state), so ←, the picker, reload at `#5.2` and print all work. Put per-step content in one table at the top of the file (see the engine's `demo/src/components/TemplateIsland.tsx`, `demo/src/components/demos/`).
+- Islands render purely from `step` (no accumulated state), so ←, the picker, reload at `#5.2` and print all work. Put per-step content in one table at the top of the file (see the island example in the engine's README).
 - Touch screens turn the page on a tap: the right half of the screen goes forward, the left half back (deck.ts); an island with its own tap / click controls puts them inside `data-no-advance` (links, buttons and inputs already are).
 - Wrap an island in `<div data-steps="N">` with N = its last step index. Use `client:load`.
 - Formulas: `slides/Math` (KaTeX, build time) in slides, `Tex` / `SvgTex` / `SvgHtml` from `viz` in islands. Any formula (subscripts, greek, softmax, matmuls) goes through KaTeX, not plain text. Reuse `slides/viz` before writing new marks or animations; if a new animation looks reusable, add it to the engine's `src/components/viz/` (props-driven, styles in `src/styles/viz.css`) rather than inline in a deck-specific island.

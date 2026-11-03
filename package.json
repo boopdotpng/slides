@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "type": "module",
   "description": "the deck engine: an astro integration plus Code, Math, viz, hooks and the deck scripts",
-  "workspaces": [
-    "demo"
-  ],
   "exports": {
     ".": "./src/integration.ts",
     "./Code": "./src/components/Code.tsx",
@@ -20,13 +17,7 @@
     "slides-record": "scripts/record.mjs"
   },
   "scripts": {
-    "dev": "cd demo && bun run dev",
-    "build": "cd demo && bun run build",
-    "preview": "cd demo && bun run preview",
-    "check": "bun scripts/colors.mjs && tsc --noEmit -p . && cd demo && bun run check",
-    "shot": "cd demo && bun run shot",
-    "record": "cd demo && bun run record",
-    "slides": "cd demo && bun run slides"
+    "check": "bun scripts/colors.mjs && tsc --noEmit -p ."
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.1",
