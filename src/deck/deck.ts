@@ -311,6 +311,28 @@ export function initDeck() {
     });
   }
 
+  // ── copy buttons (Code's `copy` prop): the audience follows along in their own copy of the deck ──────────
+  document.addEventListener('click', async (e) => {
+    const btn = (e.target as Element).closest?.<HTMLButtonElement>('.copyable > button.copy');
+    if (!btn) return;
+    const text = btn.parentElement!.dataset.copy ?? '';
+    let ok = true;
+    try { await navigator.clipboard.writeText(text); }
+    catch { // no clipboard api (plain http on another machine): copy through a selected textarea
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.append(ta);
+      ta.select();
+      ok = document.execCommand('copy');
+      ta.remove();
+    }
+    btn.blur(); // so space / enter turn the page again instead of pressing the button
+    btn.textContent = ok ? 'copied' : 'select + copy';
+    btn.classList.toggle('done', ok);
+    clearTimeout(Number(btn.dataset.t));
+    btn.dataset.t = String(window.setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('done'); }, 1500));
+  });
+
   // follow the hash when it's edited by hand (and in ?embed, where the presenter sets it)
   addEventListener('hashchange', () => go(...fromHash()));
 

@@ -2,17 +2,21 @@
 import type { ComponentChildren } from 'preact';
 
 /**
- * Tiny syntax highlighter: asm, c / c++, python. Works the same in static
+ * Tiny syntax highlighter: asm, c / c++, python, shell. Works the same in static
  * .astro slides and in islands. Line-at-a-time, so no multi-line strings or
  * block comments spanning lines.
  *
  *   <Code lang="asm" code={`li a0, 1   # stdout`} />
  *   <Code lang="c" code={src} hl={[3, 4]} />     // highlight lines 3-4 (0-based), dim the rest
+ *   <Code lang="sh" code={cmds} copy />          // a copy button in the corner (the audience has the deck open)
+ *
+ * `copy` copies the code as shown; for `sh` it drops comments and `$ ` prompts first, since zsh (the macOS default)
+ * runs a pasted `# comment` as a command. `copy="…"` copies that text instead. The click is handled in deck/deck.ts.
  *
  * Adding a language: write a fooLine(line) that returns tokens, add it to LANGS.
  */
 
-export type Lang = 'asm' | 'c' | 'cpp' | 'py';
+export type Lang = 'asm' | 'c' | 'cpp' | 'py' | 'sh';
 
 const tok = (cls: string, s: string) => <span class={`tok-${cls}`}>{s}</span>;
 
@@ -102,7 +106,58 @@ function pyLine(line: string): ComponentChildren[] {
   return out;
 }
 
-const LANGS: Record<Lang, (line: string) => ComponentChildren[]> = { asm: asmLine, c: cLine, cpp: cLine, py: pyLine };
+// ── shell ────────────────────────────────────────────────────────────────────
+// the first word of a command (after a `$ ` prompt, `sudo`, `|`, `&&`, `;`) is the command; `-x` / `--flag` are flags
+const SH_PREFIX = new Set(['sudo', 'time', 'env', 'exec']);
+
+/** Where a shell comment starts (`#` at the start of a word, outside quotes), or -1 */
+function shComment(line: string) {
+  let q = '';
+  for (let j = 0; j < line.length; j++) {
+    const c = line[j];
+    if (q) { if (c === q) q = ''; else if (c === '\\' && q === '"') j++; }
+    else if (c === '"' || c === "'") q = c;
+    else if (c === '\\') j++;
+    else if (c === '#' && (j === 0 || /\s/.test(line[j - 1]))) return j;
+  }
+  return -1;
+}
+
+function shLine(line: string): ComponentChildren[] {
+  const ci = shComment(line);
+  const code = ci < 0 ? line : line.slice(0, ci);
+  const out: ComponentChildren[] = [];
+  let cmd = true;
+  const prompt = code.match(/^(\s*)\$ /);
+  if (prompt) { out.push(prompt[1], tok('com', '$ ')); }
+  for (const m of code.slice(prompt?.[0].length ?? 0).matchAll(/(\s+)|("(?:\\.|[^"])*"|'[^']*')|(&&|\|\||[|;&]|\\$)|(\$\w+|\$\{[^}]*\})|(--?[\w-]+(?:=\S*)?)|([^\s"'|;&]+)/g)) {
+    const [s, ws, str, op, vr, flag, word] = m;
+    if (ws) out.push(s);
+    else if (str) out.push(tok('str', s));
+    else if (op) { out.push(tok('kw', s)); if (s !== '\\') cmd = true; }
+    else if (vr) out.push(tok('reg', s));
+    else if (flag) out.push(tok('num', s));
+    else if (word) {
+      if (cmd && /^\w+=/.test(s)) out.push(tok('reg', s)); // VAR=value before a command
+      else if (cmd) { out.push(tok('fn', s)); if (!SH_PREFIX.has(s)) cmd = false; }
+      else out.push(s);
+    } else out.push(s);
+  }
+  if (ci >= 0) out.push(tok('com', line.slice(ci)));
+  return out;
+}
+
+/** What a copy button copies: for sh, without comments, `$ ` prompts or blank lines */
+export function copyText(code: string, lang: Lang) {
+  const lines = code.replace(/^\n|\n\s*$/g, '').split('\n');
+  if (lang !== 'sh') return lines.join('\n') + '\n';
+  return lines
+    .map((l) => { const ci = shComment(l); return (ci < 0 ? l : l.slice(0, ci)).replace(/^(\s*)\$ /, '$1').trimEnd(); })
+    .filter((l) => l.trim())
+    .join('\n') + '\n';
+}
+
+const LANGS: Record<Lang, (line: string) => ComponentChildren[]> = { asm: asmLine, c: cLine, cpp: cLine, py: pyLine, sh: shLine };
 
 /** One line, as tokens. Use it inline: <code>{highlight('add t0, t1, t2', 'asm')}</code> */
 export function highlight(line: string, lang: Lang) {
@@ -115,17 +170,26 @@ type Props = {
   /** 0-based line numbers to highlight; the other lines are dimmed */
   hl?: number[];
   class?: string;
+  /** a copy button: true copies the code (sh: minus comments / prompts), a string copies that */
+  copy?: boolean | string;
 };
 
-export default function Code({ code, lang, hl, class: cls = '' }: Props) {
+export default function Code({ code, lang, hl, class: cls = '', copy }: Props) {
   // template literals usually start with a newline right after the backtick
   const lines = code.replace(/^\n|\n\s*$/g, '').split('\n');
   const on = new Set(hl ?? []);
-  return (
-    <pre class={`code ${on.size ? 'has-hl' : ''} ${cls}`}>
+  const pre = (
+    <pre class={`code ${on.size ? 'has-hl' : ''} ${copy ? '' : cls}`}>
       {lines.map((l, j) => (
         <div class={`ln ${on.has(j) ? 'hl' : ''}`}>{l ? highlight(l, lang) : ' '}</div>
       ))}
     </pre>
+  );
+  if (!copy) return pre;
+  return (
+    <div class={`copyable ${cls}`} data-copy={typeof copy === 'string' ? copy : copyText(code, lang)}>
+      {pre}
+      <button type="button" class="copy" title="copy to clipboard" aria-label="copy to clipboard">copy</button>
+    </div>
   );
 }

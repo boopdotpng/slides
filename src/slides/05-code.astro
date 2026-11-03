@@ -24,12 +24,17 @@ loop:
 done:
     mv   a0, t0
     ret`;
+const sh = `
+# a copy button copies this without the comments
+curl -LsSf https://astral.sh/uv/install.sh | sh
+cd tinygrad && uv venv --python 3.12   # a .venv in the project`;
 ---
 <header>
-  <h2>code: c / c++, asm, python</h2>
+  <h2>code: c / c++, asm, python, shell</h2>
 </header>
 <div class="cols small">
   <Code lang="c" code={c} />
   <Code lang="asm" code={asm} hl={[3, 4, 5, 6, 7, 8]} />
 </div>
-<p class="muted small"><code>hl</code> highlights lines and dims the rest. inline: <code>highlight(line, 'asm')</code></p>
+<Code lang="sh" code={sh} copy class="small" />
+<p class="muted small"><code>hl</code> highlights lines and dims the rest. <code>copy</code> adds a copy button. inline: <code>highlight(line, 'asm')</code></p>

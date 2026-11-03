@@ -143,7 +143,7 @@ Copy `src/components/TemplateIsland.tsx`. Hooks (`src/deck/hooks.ts`):
 
 ## components
 
-- `Code`: tiny highlighter for `asm` (risc-v / x86 / arm names), `c`, `cpp`, `py`. `hl` highlights lines and dims the rest; `highlight(line, lang)` for inline.
+- `Code`: tiny highlighter for `asm` (risc-v / x86 / arm names), `c`, `cpp`, `py`, `sh`. `hl` highlights lines and dims the rest; `highlight(line, lang)` for inline. `copy` puts a copy button in the corner, for commands the audience runs from their own copy of the deck (`sh` copies without comments or `$ ` prompts; `copy="…"` copies other text).
 - `Math`: LaTeX via KaTeX at build time, `<Math tex="..." />` inline or `block`. static html, no client js.
 - `Tex` / `SvgTex` (from `viz`): the same in an island, `<Tex tex="..." />` / `block`; `SvgTex` puts one inside an svg at (x, y), anchored like `<text>`; `SvgHtml` does the same for any html (words and a `<Tex>`).
 - `components/viz` (see the demo slides for each one in use):
