@@ -39,7 +39,7 @@ islands, `public/` assets and `deck.config.ts` are never touched, so keep deck-s
 | t | theme: auto (follows the browser / os) → light → dark, also the button in the corner. Remembered across decks and windows; dark until you pick |
 | home / end | first / last |
 
-On a phone or tablet (or any touch screen): tap anywhere on the slide for next, swipe left / right for next / back.
+On a phone or tablet (or any touch screen): tap the right half of the screen for next, the left half for back; swipe left / right for next / back.
 The nav stays on screen, dimmed until you touch it, with finger-sized buttons; tap the counter for the slide grid,
 which has a "go to #" box. The notes button is hidden (the presenter window is a desktop popup). Held upright, the
 slide is centered at up to 4:3 instead of stretching down the whole screen (landscape is the way to watch: held sideways, a phone puts the nav in its own column beside the slide). iPhones have no fullscreen button

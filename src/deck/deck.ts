@@ -15,8 +15,8 @@
  * Keys: → / space next, ← back, g slide grid (arrows / click, or type a number, then enter),
  * f fullscreen, p presenter window, t theme (auto → light → dark), home / end.
  *
- * Touch (phones, tablets, touch screens): tap anywhere on the slide for next, swipe left / right for
- * next / back. The nav stays on screen (dimmed between touches), the counter opens the slide grid,
+ * Touch (phones, tablets, touch screens): tap the right half of the screen for next, the left half for back;
+ * swipe left / right for next / back. The nav stays on screen (dimmed between touches), the counter opens the slide grid,
  * which has a "go to" number box, and the notes button is hidden. Taps on links, buttons, inputs or
  * anything inside [data-no-advance] are left alone, so an island can take its own taps.
  *
@@ -280,7 +280,7 @@ export function initDeck() {
       if (e.movementX || e.movementY) { setTouch(false); wake(); }
     });
 
-    // ── touch: tap anywhere for next, swipe left / right for next / back ───
+    // ── touch: tap the right half for next, the left half for back; swipe left / right for next / back ───
     const SWIPE = 40, TAP = 12, TAP_MS = 600;
     let start: { x: number; y: number; t: number } | null = null;
     let fingers = 0;
@@ -307,7 +307,11 @@ export function initDeck() {
       const dx = e.clientX - s.x, dy = e.clientY - s.y;
       const zoomed = (visualViewport?.scale ?? 1) > 1.05; // pinch-zoomed in: a drag is looking around, not a swipe
       if (!zoomed && Math.abs(dx) > SWIPE && Math.abs(dx) > 1.5 * Math.abs(dy)) dx < 0 ? next() : prev();
-      else if (Math.hypot(dx, dy) < TAP && e.timeStamp - s.t < TAP_MS) next();
+      else if (Math.hypot(dx, dy) < TAP && e.timeStamp - s.t < TAP_MS) {
+        // halves of what's on screen (the visual viewport, so a pinch-zoomed page splits where you see it)
+        const vv = visualViewport, x = e.clientX - (vv?.offsetLeft ?? 0), w = vv?.width ?? innerWidth;
+        x < w / 2 ? prev() : next();
+      }
     });
   }
 
