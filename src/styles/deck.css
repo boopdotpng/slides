@@ -155,6 +155,13 @@ body.ui #nav, #nav:hover { opacity: 1; }
 .touch #nav button { min-height: 40px; min-width: 44px; padding: 0 10px; touch-action: manipulation; }
 .touch #nav #counter { min-width: 4.5em; border-color: var(--line-2); }
 .touch #notes-btn, .touch .viz-tip { display: none; }
+/* a phone held sideways (html.gutter, index.astro): the nav is a column in its own strip at the right edge, beside the
+   slide instead of over it */
+html.gutter .touch #nav { flex-direction: column; justify-content: center; top: 0; bottom: 0; right: 0; width: 76px;
+  padding: 8px 6px; border-radius: 0; opacity: .7; font-size: 13px; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+html.gutter .touch.ui #nav { opacity: 1; }
+html.gutter .touch #nav button { width: 100%; min-width: 0; padding: 0 2px; }
+html.gutter .touch #nav #counter { min-width: 0; }
 #rotate { display: none; }
 @media (orientation: portrait) {
   .mode-main.touch #rotate { display: block; position: fixed; top: max(14px, env(safe-area-inset-top)); left: 0; right: 0;
