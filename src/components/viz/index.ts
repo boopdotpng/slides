@@ -1,6 +1,6 @@
 /**
  * The viz kit. Import what you need in an island:
- *   import { Bars, Heatmap, COLORS, useData } from '../components/viz';
+ *   import { Bars, Heatmap, COLORS, useData } from 'slides/viz';
  * Styles live in styles/viz.css (loaded on every page).
  */
 export * from './color';

@@ -1,16 +1,52 @@
 # slides
 
-A template for educational slide decks: Astro + Preact islands. Slides are
+An engine for educational slide decks: Astro + Preact islands. Slides are
 plain `.astro` / `.mdx` files; anything animated or interactive is an island
 that reacts to the deck's step counter.
 
-## start a new deck
+This repo is the engine, an npm-style package named `slides`, plus a demo deck in `demo/` that uses it the way
+every deck does. A deck holds only its own files; the engine comes in as a dependency:
+
+```
+astro.config.mjs     integrations: [slides()]   (the whole config)
+package.json         "slides": "workspace:*" (or a git / file dependency), astro, preact
+tsconfig.json
+src/deck.config.ts   title, scale
+src/slides/          the slides, one file each, plus notes.md
+src/components/      the deck's own islands
+public/              images, data/
+```
+
+`slides()` (`src/integration.ts`) adds preact, mdx and the notes endpoint and serves the deck at `/`
+(`src/pages/index.astro`, which reads the deck's `src/deck.config.ts` and `src/slides/`). A deck imports the rest by name:
+
+```ts
+import Code from 'slides/Code';           // also { highlight }
+import Math from 'slides/Math';           // .astro, build-time KaTeX
+import { Walkthrough, COLORS, useIsland } from 'slides/viz';
+import { useSlideStep } from 'slides/hooks';
+```
+
+and its package.json scripts call the engine's bins: `slides` (slide files), `slides-colors` (palette check),
+`slides-shot`, `slides-record`. They work on the deck in the current directory.
+
+## run the demo
 
 ```sh
-bunx degit boopdotpng/slides my-deck   # or "Use this template" on github
-cd my-deck
 bun install
-bun dev                                # http://localhost:4321
+bun dev                                # http://localhost:4321, the demo deck
+bun run check && bun run build         # check also typechecks the engine itself
+```
+
+## start a new deck
+
+In a repo of decks that has this engine as a submodule at `engine/` and a bun workspace at its root
+(like [boopdotpng/slide-decks](https://github.com/boopdotpng/slide-decks)):
+
+```sh
+cp -r engine/demo lec3/topic/slides      # then set "name" in its package.json (workspace names are unique)
+# add "lec3/topic/slides" to the root package.json workspaces
+bun install && cd lec3/topic/slides && bun dev
 ```
 
 Then:
@@ -18,14 +54,13 @@ Then:
 2. delete the demo slides in `src/slides/` (and `src/components/demos/`) once you've seen them
 3. add slides with `bun run slides new <name>` (see "writing slides")
 
-`bun run build` makes a static site in `dist/`. `bun run check` typechecks and fails on color literals outside the palette (`scripts/colors.mjs`).
+`bun run build` makes a static site in `dist/`. `bun run check` typechecks and fails on color literals outside the palette (`slides-colors`).
 
 ## keeping decks up to date
 
-Edit the template, then `bun run sync ~/path/to/deck [more decks…]` from here. It overwrites the
-template's own files in each deck (`src/deck/`, `pages/index.astro`, `styles/`, `Code.tsx`, `viz/`,
-fonts, `scripts/`, configs, these docs; see `scripts/sync.mjs`) and merges package.json. Slides,
-islands, `public/` assets and `deck.config.ts` are never touched, so keep deck-specific code there.
+Decks don't hold a copy of the engine, so there's nothing to sync: commit engine changes here, then in the decks repo
+`git submodule update --remote engine` and commit the new `engine` pointer. Under `bun dev`, an edit to the engine
+checkout shows up in every deck's dev server right away.
 
 ## presenting
 
@@ -86,7 +121,7 @@ comes from `data-title`, else the first h1/h2, else the filename.
 
 ```astro
 ---
-import Code from '../components/Code.tsx';
+import Code from 'slides/Code';
 import MyThing from '../components/MyThing.tsx';
 ---
 <header>                                       <!-- title at the very top, content centered below -->
@@ -124,7 +159,7 @@ Every slide is laid out on a 1600×900 canvas that's scaled to fit the window: o
 that isn't 16:9 extends the canvas the long way rather than letterboxing. So size things in px or em, and use
 `cqw` / `cqh` (% of the slide) instead of `vw` / `vh` (% of the window). If a slide's content doesn't fit in 1600×900,
 `bun run shot` says OVERFLOW. Islands measuring the DOM get screen px from `getBoundingClientRect`: `box()` already
-converts, otherwise divide by `deckScale()` (`deck/hooks.ts`).
+converts, otherwise divide by `deckScale()` (`slides/hooks`).
 
 Classes in `styles/deck.css`: `step`, `cols`, `small`, `muted`, `accent`,
 `center`, `full`, `fill`, `sub`, `caption`, `fade` + `on`, `notes` (and `section`, the kicker, in `viz.css`). Theme colors and fonts are
@@ -133,7 +168,7 @@ those (no hex / rgb() in slides or islands, `bun run check` enforces it), so eve
 
 ## islands
 
-Copy `src/components/TemplateIsland.tsx`. Hooks (`src/deck/hooks.ts`):
+Copy `demo/src/components/TemplateIsland.tsx` into the deck's `src/components/`. Hooks (`slides/hooks`, `src/deck/hooks.ts` here):
 
 - `useSlideStep(ref)`: current step, for step-driven animation. Render purely from it.
 - `useIsland(name)` (viz): `{ root, step, d }`: a root ref, the step, and `public/data/<name>.json`, the usual start of a data-driven island.
@@ -146,7 +181,7 @@ Copy `src/components/TemplateIsland.tsx`. Hooks (`src/deck/hooks.ts`):
 - `Code`: tiny highlighter for `asm` (risc-v / x86 / arm names), `c`, `cpp`, `py`, `sh`. `hl` highlights lines and dims the rest; `highlight(line, lang)` for inline. `copy` puts a copy button in the corner, for commands the audience runs from their own copy of the deck (`sh` copies without comments or `$ ` prompts; `copy="…"` copies other text).
 - `Math`: LaTeX via KaTeX at build time, `<Math tex="..." />` inline or `block`. static html, no client js.
 - `Tex` / `SvgTex` (from `viz`): the same in an island, `<Tex tex="..." />` / `block`; `SvgTex` puts one inside an svg at (x, y), anchored like `<text>`; `SvgHtml` does the same for any html (words and a `<Tex>`).
-- `components/viz` (see the demo slides for each one in use):
+- `slides/viz` (`src/components/viz/`; see the demo slides for each one in use):
   - `Walkthrough`: code + state table + caption, stepped or `auto`; `StateTable` on its own
   - `BitFields`, `Bytes`: binary words split into fields, memory as byte cells
   - `Timeline`: bars growing on a time axis (pipelines, schedules)
@@ -164,15 +199,16 @@ Copy `src/components/TemplateIsland.tsx`. Hooks (`src/deck/hooks.ts`):
 
 ```
 src/
-  deck.config.ts        title
-  deck/                 the engine: deck.ts (nav, steps, picker, modes), presenter.ts, hooks.ts
-  pages/index.astro     loads every slide into one page
-  slides/               your slides
-  components/           Code, Math, TemplateIsland, viz/, demos/
+  integration.ts        slides(): the astro integration a deck's config uses
+  deck/                 the engine: deck.ts (nav, steps, picker, modes), presenter.ts, hooks.ts, notes-*.ts
+  pages/index.astro     loads every slide of the deck into one page (injected at /)
+  components/           Code, Math, viz/
   styles/               deck.css (engine + theme), viz.css
-public/                 images, fonts (Paper Mono, OFL), data/
+  fonts/                Inter, Paper Mono (OFL), bundled by vite from deck.css
+scripts/                the bins: slides.mjs, colors.mjs, shot.mjs, record.mjs
+demo/                   the demo deck: astro.config.mjs, src/deck.config.ts, src/slides/, src/components/, public/
 ```
 
 Code font is [Paper Mono](https://github.com/paper-design/paper-mono) (SIL OFL,
-license in `public/fonts/`). If you deploy under a subpath (`base` in
-`astro.config.mjs`), update the `/fonts/` and `/example.svg` URLs too.
+license in `src/fonts/`). Fonts are bundled, so a deck deployed under a subpath (`base` in `astro.config.mjs`, or
+`astro build --base`) needs no changes; images in a deck's `public/` are its own to prefix.
